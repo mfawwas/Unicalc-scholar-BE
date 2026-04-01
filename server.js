@@ -6,6 +6,12 @@ import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import recordRoutes from "./src/routes/record.routes.js";
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://unicalc-delta.vercel.app",
+];
+
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -20,10 +26,21 @@ app.get("/", (req, res) => {
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://unicalc-server.vercel.app/"],
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
+app.options("*", cors());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/records", recordRoutes);
