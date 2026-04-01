@@ -6,11 +6,6 @@ import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import recordRoutes from "./src/routes/record.routes.js";
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://unicalc-delta.vercel.app",
-];
-
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -24,21 +19,18 @@ app.get("/", (req, res) => {
   res.send("Unicalc Backend in development progress");
 });
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like Postman)
-      if (!origin) return callback(null, true);
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://unicalc-delta.vercel.app");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+  // 🔥 Handle preflight request
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 app.options("*", cors());
 
