@@ -20,7 +20,12 @@ app.get("/", (req, res) => {
 });
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://unicalc-delta.vercel.app");
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://unicalc-delta.vercel.app",
+    "http://127.0.0.1:5500/",
+    "localhost:5500"
+  );
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
@@ -32,7 +37,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.options("*", cors());
+app.options("/", cors());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/records", recordRoutes);
